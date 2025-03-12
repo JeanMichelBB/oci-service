@@ -35,6 +35,11 @@ jobs:
       - name: Check out the repository
         uses: actions/checkout@v4
 
+      - name: Set up OCI CLI
+        uses: oracle-actions/run-oci-cli-command@v1.3.2
+        with:
+          command: "oci -v"
+
       - name: Configure OCI CLI
         env:
           OCI_USER_OCID: ${{ secrets.OCI_USER_OCID }}
@@ -55,7 +60,7 @@ jobs:
         uses: oracle-actions/run-oci-cli-command@v1.3.2
         id: get-instance-ocid
         with:
-          command: "oci compute instance list --compartment-id ${OCI_COMPARTMENT_OCID} --region ${OCI_REGION}"
+          command: "oci compute instance list --compartment-id ${OCI_COMPARTMENT_OCID} --region ${OCI_REGION} "
           query: "data[?\"display-name\"=='my-instance'].id | [0]"
           
       - name: Verify Instance OCID
