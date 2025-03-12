@@ -39,6 +39,7 @@ jobs:
         uses: oracle-actions/run-oci-cli-command@v1.3.2
         with:
           command: "oci -v"
+          silent: false
 
       - name: Configure OCI CLI
         env:
@@ -55,6 +56,7 @@ jobs:
         uses: oracle-actions/run-oci-cli-command@v1.3.2
         with:
           command: "oci iam user list | jq -r '.data[].name'"
+          silent: false
 
       - name: Get Instance OCID
         uses: oracle-actions/run-oci-cli-command@v1.3.2
@@ -62,6 +64,7 @@ jobs:
         with:
           command: "oci compute instance list --compartment-id ${OCI_COMPARTMENT_OCID} --region ${OCI_REGION} "
           query: "data[?\"display-name\"=='my-instance'].id | [0]"
+          silent: false
           
       - name: Verify Instance OCID
         run: |
