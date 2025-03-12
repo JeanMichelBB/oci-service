@@ -61,7 +61,7 @@ jobs:
           chmod 600 ~/.oci/oci_private_key.pem
           echo "key_file=~/.oci/oci_private_key.pem" >> ~/.oci/config
           chmod 600 ~/.oci/config
-          echo "Config file created at ~/.oci/config"
+          echo "✅ Config file created at ~/.oci/config"
 
       - name: Restart the service
         run: |
@@ -69,7 +69,7 @@ jobs:
           echo "🔄 Restarting instance..."
           oci compute instance action \
             --action SOFTRESET \
-            --instance-id $(echo ${OCI_INSTANCE_ID} | tr -d '"') \
-            --region ${OCI_REGION} \
+            --instance-id "${OCI_INSTANCE_ID}" \
+            --region "${OCI_REGION}" \
             || (echo "❌ Failed to restart instance." && exit 1)
           echo "✅ Instance restarted successfully."
