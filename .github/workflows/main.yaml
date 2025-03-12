@@ -54,10 +54,12 @@ jobs:
           echo "[DEFAULT]" > ~/.oci/config
           echo "user=${OCI_USER_OCID}" >> ~/.oci/config
           echo "fingerprint=${OCI_KEY_FINGERPRINT}" >> ~/.oci/config
-          echo "key_file=${OCI_PRIVATE_KEY}" >> ~/.oci/config
           echo "tenancy=${OCI_TENANCY_OCID}" >> ~/.oci/config
           echo "region=${OCI_REGION}" >> ~/.oci/config
-          echo "config file created at ~/.oci/config"
+          echo "${OCI_PRIVATE_KEY}" > ~/.oci/oci_private_key.pem
+          chmod 600 ~/.oci/oci_private_key.pem
+          echo "key_file=~/.oci/oci_private_key.pem" >> ~/.oci/config
+          echo "Config file created at ~/.oci/config"
 
       - name: Test OCI CLI
         uses: oracle-actions/run-oci-cli-command@v1.3.2
