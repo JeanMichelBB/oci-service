@@ -49,7 +49,6 @@ jobs:
           OCI_PRIVATE_KEY: ${{ secrets.OCI_PRIVATE_KEY }}
           OCI_KEY_FINGERPRINT: ${{ secrets.OCI_KEY_FINGERPRINT }}
           OCI_INSTANCE_ID: ${{ secrets.OCI_INSTANCE_ID }}
-          OCI_CLI_SUPPRESS_FILE_PERMISSIONS_WARNING: "True"
         run: |
           mkdir -p ~/.oci
           echo "[DEFAULT]" > ~/.oci/config
@@ -64,12 +63,7 @@ jobs:
           echo "✅ Config file created at ~/.oci/config"
 
       - name: Restart the service
-        run: |
-          set -e  # Exit on error
-          echo "🔄 Restarting instance..."
-          oci compute instance action \
-            --action SOFTRESET \
-            --instance-id "${OCI_INSTANCE_ID}" \
-            --region "${OCI_REGION}" \
-            || (echo "❌ Failed to restart instance." && exit 1)
-          echo "✅ Instance restarted successfully."
+        uses: oracle-actions/run-oci-cli-command@v1.3.2
+        with:
+          command: "oci compute instance action --action SOFTRESET --instance-id ${{ secrets.OCI_INSTANCE_ID }} --region ${{ secrets.OCI_REGION }}"
+          silent: false
