@@ -51,6 +51,7 @@ jobs:
           echo "key_file=${OCI_PRIVATE_KEY}" >> ~/.oci/config
           echo "tenancy=${OCI_TENANCY_OCID}" >> ~/.oci/config
           echo "region=${OCI_REGION}" >> ~/.oci/config
+          echo "compartment=${OCI_COMPARTMENT_OCID}" >> ~/.oci/config
           echo "✅ OCI CLI configured successfully."
 
       - name: Get Instance OCID
