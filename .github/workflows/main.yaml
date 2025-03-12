@@ -42,6 +42,7 @@ jobs:
           OCI_REGION: ${{ secrets.OCI_REGION }}
           OCI_PRIVATE_KEY: ${{ secrets.OCI_PRIVATE_KEY }}
           OCI_KEY_FINGERPRINT: ${{ secrets.OCI_KEY_FINGERPRINT }}
+          OCI_COMPARTMENT_OCID: ${{ secrets.OCI_COMPARTMENT_OCID }}
         run: |
           set -e  # Exit on error
           mkdir -p ~/.oci
@@ -57,7 +58,7 @@ jobs:
         uses: oracle-actions/run-oci-cli-command@v1.3.2
         id: get-instance-ocid
         with:
-          command: "oci compute instance list --compartment-id ${OCI_TENANCY_OCID} --region ${OCI_REGION}"
+          command: "oci compute instance list --compartment-id ${OCI_COMPARTMENT_OCID} --region ${OCI_REGION}"
           query: "data[?\"display-name\"=='my-instance'].id | [0]"
 
       - name: Verify Instance OCID
