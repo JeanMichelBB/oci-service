@@ -55,7 +55,8 @@ jobs:
       - name: Test OCI CLI
         uses: oracle-actions/run-oci-cli-command@v1.3.2
         with:
-          command: "oci iam user list | jq -r '.data[].name'"
+          command: |
+            oci iam user list | jq '.data[].name'
           silent: false
 
       - name: Get Instance OCID
