@@ -50,8 +50,21 @@ jobs:
           OCI_KEY_FINGERPRINT: ${{ secrets.OCI_KEY_FINGERPRINT }}
           OCI_COMPARTMENT_OCID: ${{ secrets.OCI_COMPARTMENT_OCID }}
         run: |
-          echo "OCI CLI configured using environment variables."
+          mkdir -p ~/.oci
+          echo "[DEFAULT]" > ~/.oci/config
+          echo "user=${OCI_USER_OCID}" >> ~/.oci/config
+          echo "fingerprint=${OCI_KEY_FINGERPRINT}" >> ~/.oci/config
+          echo "key_file=${OCI_PRIVATE_KEY}" >> ~/.oci/config
+          echo "tenancy=${OCI_TENANCY_OCID}" >> ~/.oci/config
+          echo "region=${OCI_REGION}" >> ~/.oci/config
+          echo "config file created at ~/.oci/config"
 
+      - name: Test OCI CLI
+        uses: oracle-actions/run-oci-cli-command@v1.3.2
+        with:
+          command: "oci iam user list"
+          silent: false
+          
       - name: Get Instance OCID
         uses: oracle-actions/run-oci-cli-command@v1.3.2
         id: get-instance-ocid
