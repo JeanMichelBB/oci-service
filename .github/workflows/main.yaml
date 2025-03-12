@@ -52,12 +52,6 @@ jobs:
         run: |
           echo "OCI CLI configured using environment variables."
 
-      - name: Test OCI CLI
-        uses: oracle-actions/run-oci-cli-command@v1.3.2
-        with:
-          command: "bash -c 'oci iam user list | jq \".data[].name\"'"
-          silent: false
-
       - name: Get Instance OCID
         uses: oracle-actions/run-oci-cli-command@v1.3.2
         id: get-instance-ocid
