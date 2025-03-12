@@ -59,6 +59,7 @@ jobs:
           echo "${OCI_PRIVATE_KEY}" > ~/.oci/oci_private_key.pem
           chmod 600 ~/.oci/oci_private_key.pem
           echo "key_file=~/.oci/oci_private_key.pem" >> ~/.oci/config
+          chmod 600 ~/.oci/config
           echo "Config file created at ~/.oci/config"
 
       - name: Test OCI CLI
