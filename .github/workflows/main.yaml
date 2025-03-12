@@ -48,7 +48,8 @@ jobs:
           OCI_REGION: ${{ secrets.OCI_REGION }}
           OCI_PRIVATE_KEY: ${{ secrets.OCI_PRIVATE_KEY }}
           OCI_KEY_FINGERPRINT: ${{ secrets.OCI_KEY_FINGERPRINT }}
-          OCI_COMPARTMENT_OCID: ${{ secrets.OCI_COMPARTMENT_OCID }}
+          OCI_INSTANCE_ID: ${{ secrets.OCI_INSTANCE_ID }}
+          OCI_CLI_SUPPRESS_FILE_PERMISSIONS_WARNING: "True"
         run: |
           mkdir -p ~/.oci
           echo "[DEFAULT]" > ~/.oci/config
@@ -62,36 +63,13 @@ jobs:
           chmod 600 ~/.oci/config
           echo "Config file created at ~/.oci/config"
 
-      - name: Test OCI CLI
-        uses: oracle-actions/run-oci-cli-command@v1.3.2
-        with:
-          command: "oci iam user list"
-          silent: false
-          
-      - name: Get Instance OCID
-        uses: oracle-actions/run-oci-cli-command@v1.3.2
-        id: get-instance-ocid
-        with:
-          command: "oci compute instance list --compartment-id ${OCI_COMPARTMENT_OCID} --region ${OCI_REGION}"
-          query: "data[?\"display-name\"=='my-instance'].id | [0]"
-          silent: false
-          
-      - name: Verify Instance OCID
-        run: |
-          if [ -z "${{ steps.get-instance-ocid.outputs.raw_output }}" ]; then
-            echo "❌ Instance OCID not found. Check if 'my-instance' exists."
-            exit 1
-          else
-            echo "✅ Instance OCID retrieved: ${{ steps.get-instance-ocid.outputs.raw_output }}"
-          fi
-
       - name: Restart the service
         run: |
           set -e  # Exit on error
           echo "🔄 Restarting instance..."
           oci compute instance action \
             --action SOFTRESET \
-            --instance-id ${{ steps.get-instance-ocid.outputs.raw_output }} \
+            --instance-id $(echo ${OCI_INSTANCE_ID} | tr -d '"') \
             --region ${OCI_REGION} \
             || (echo "❌ Failed to restart instance." && exit 1)
           echo "✅ Instance restarted successfully."
