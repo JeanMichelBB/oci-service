@@ -62,12 +62,12 @@ jobs:
           chmod 600 ~/.oci/config
           echo "Config file created at ~/.oci/config"
 
-      - name: Get the instance ID
+      - name: Get the instance ID of the running instance
         run: |
           INSTANCE_ID=$(oci compute instance list \
             --compartment-id ${{ secrets.OCI_COMPARTMENT_ID }} \
             --all \
-            --query "data[?\"lifecycle-state\"=='RUNNING'] | sort_by(@, &\"time-created\") | [-1].\"id\"" \
+            --query "data[?\"lifecycle-state\"=='RUNNING'] | sort_by(@, &\"time-created\") | [0].\"id\"" \
             --output json | jq -r '.')
           echo "INSTANCE_ID=$INSTANCE_ID" >> $GITHUB_ENV
       
