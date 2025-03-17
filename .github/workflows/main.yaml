@@ -62,13 +62,17 @@ jobs:
           chmod 600 ~/.oci/config
           echo "Config file created at ~/.oci/config"
 
-      - name: Get the public IP of the instance
+      - name: Get the instance ID
         run: |
-          PUBLIC_IP=$(oci compute instance list --compartment-id ${{ secrets.OCI_COMPARTMENT_ID }} --sort-by TIMECREATED --all --query "data[0].id" --raw-output | xargs -I {} oci compute instance list-vnics --instance-id {} --query "data[0].\"public-ip\"" --raw-output)
-          echo "PUBLIC_IP=$PUBLIC_IP" >> $GITHUB_ENV
-
+          INSTANCE_ID=$(oci compute instance list \
+            --compartment-id ${{ secrets.OCI_COMPARTMENT_ID }} \
+            --all \
+            --query "data[?\"lifecycle-state\"=='RUNNING'] | sort_by(@, &\"time-created\") | [-1].\"id\"" \
+            --output json | jq -r '.')
+          echo "INSTANCE_ID=$INSTANCE_ID" >> $GITHUB_ENV
+      
       - name: Restart the service
         uses: oracle-actions/run-oci-cli-command@v1.3.2
         with:
-          command: "oci compute instance action --action SOFTRESET --instance-id ${{ env.PUBLIC_IP }} --region ${{ secrets.OCI_REGION }}"
+          command: "oci compute instance action --action SOFTRESET --instance-id ${{ env.INSTANCE_ID }} --region ${{ secrets.OCI_REGION }}"
           silent: false
