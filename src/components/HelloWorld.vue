@@ -26,7 +26,7 @@ const count = ref(0)
     >, the official Vue + Vite starter
   </p>
   <p>
-    Version: 1.0.1
+    Version: 1.0.2
   </p>
   <p>
     Learn more about IDE Support for Vue in the

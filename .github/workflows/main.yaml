@@ -49,7 +49,6 @@ jobs:
           OCI_REGION: ${{ secrets.OCI_REGION }}
           OCI_PRIVATE_KEY: ${{ secrets.OCI_PRIVATE_KEY }}
           OCI_KEY_FINGERPRINT: ${{ secrets.OCI_KEY_FINGERPRINT }}
-          OCI_INSTANCE_ID: ${{ secrets.OCI_INSTANCE_ID }}
         run: |
           mkdir -p ~/.oci
           echo "[DEFAULT]" > ~/.oci/config
@@ -63,8 +62,13 @@ jobs:
           chmod 600 ~/.oci/config
           echo "Config file created at ~/.oci/config"
 
+      - name: Get the public IP of the instance
+        run: |
+          PUBLIC_IP=$(oci compute instance list --compartment-id ${{ secrets.OCI_COMPARTMENT_ID }} --sort-by TIMECREATED --all --query "data[0].id" --raw-output | xargs -I {} oci compute instance list-vnics --instance-id {} --query "data[0].\"public-ip\"" --raw-output)
+          echo "PUBLIC_IP=$PUBLIC_IP" >> $GITHUB_ENV
+
       - name: Restart the service
         uses: oracle-actions/run-oci-cli-command@v1.3.2
         with:
-          command: "oci compute instance action --action SOFTRESET --instance-id ${{ secrets.OCI_INSTANCE_ID }} --region ${{ secrets.OCI_REGION }}"
+          command: "oci compute instance action --action SOFTRESET --instance-id ${{ env.PUBLIC_IP }} --region ${{ secrets.OCI_REGION }}"
           silent: false
